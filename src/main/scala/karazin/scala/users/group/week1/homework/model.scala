@@ -13,6 +13,7 @@ import java.util.UUID
   for one domain 
  */
 object model:
+  
   case class UserProfile(userId: UUID)
   case class Post(userId: UUID, postId: UUID)
   case class Comment(userId: UUID, postId: UUID)

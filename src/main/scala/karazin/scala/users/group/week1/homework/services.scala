@@ -12,6 +12,7 @@ import model._
   The services need to be implemented in case of running the code
  */
 object services:
+  
   def getUserProfile(): ErrorOr[UserProfile] = ???
   def getPosts(userId: UUID): ErrorOr[List[Post]] = ???
   def getComments(postId: UUID): ErrorOr[List[Comment]] = ??? 

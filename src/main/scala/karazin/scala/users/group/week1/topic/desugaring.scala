@@ -18,11 +18,11 @@ object desugaring:
    */
   def getUserId: Option[UUID] =
    for
-     profile <- getUserProfile()
+     profile ← getUserProfile()
    yield profile.userId
    
   def getUserIdDesugared: Option[UUID] =
-    getUserProfile() map { profile =>
+    getUserProfile() map { profile ⇒
       profile.userId
     }
     
@@ -32,12 +32,12 @@ object desugaring:
    */
   def getUserPosts: Option[List[Post]] =
    for
-     profile <- getUserProfile()
-     posts   <- getPosts(profile.userId)
+     profile ← getUserProfile()
+     posts   ← getPosts(profile.userId)
    yield posts 
 
   def getUserPostsDesugared: Option[List[Post]] =
-    getUserProfile() flatMap { profile =>
+    getUserProfile() flatMap { profile ⇒
       getPosts(profile.userId)
     }
 
@@ -48,13 +48,13 @@ object desugaring:
    */
   def getUserFirstPosts: Option[Post] =
    for
-     profile <- getUserProfile()
-     posts   <- getPosts(profile.userId)
+     profile ← getUserProfile()
+     posts   ← getPosts(profile.userId)
    yield posts.head
    
   def getUserFirstPostsDesugared: Option[Post] = 
-    getUserProfile() flatMap { profile =>
+    getUserProfile() flatMap { profile ⇒
       getPosts(profile.userId)
-    } map { posts =>
+    } map { posts ⇒
       posts.head
     }
