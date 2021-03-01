@@ -13,41 +13,32 @@ object adt:
   
   enum ErrorOr[+V]:
     
-    // Added to make it compilable. Remove it.
-    case DummyCase
+    case Or(x: V) extends ErrorOr[V]
+    case Err extends ErrorOr[Nothing]
     
-    /* 
-      Two case must be defined: 
-      * a case for a regular value
-      * a case for an error (it should contain an actual throwable)
-     */
+    
+    def flatMap[Q](f: V ⇒ ErrorOr[Q]): ErrorOr[Q] =
+      this match
+        case ErrorOr.Err      ⇒ ErrorOr.Err
+        case ErrorOr.Or(v)    ⇒ 
+          try
+            f(v)
+          catch
+            case _            ⇒ ErrorOr.Err
+    
+    
+    def map[Q](f: V ⇒ Q): ErrorOr[Q] =
+      this match
+        case ErrorOr.Err      ⇒ ErrorOr.Err
+        case ErrorOr.Or(v)    ⇒
+          try
+            ErrorOr.Or(f(v))
+          catch
+            case _            ⇒ ErrorOr.Err
+      
   
-    /* 
-      The method is used for defining execution pipelines
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-    */ 
-    def flatMap = ???
-
-    /* 
-      The method is used for changing the internal object
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-     */
-    def map = ???
-      
-  // Companion object to define constructor
   object ErrorOr:
-    /* 
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-    */
-    def apply = ???
+    def apply[V](v: V): ErrorOr[V] =
+      if v.isInstanceOf[Throwable] then ErrorOr.Err else ErrorOr.Or(v)
       
   
