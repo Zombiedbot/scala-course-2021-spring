@@ -14,31 +14,31 @@ object adt:
   enum ErrorOr[+V]:
     
     case Or(x: V) extends ErrorOr[V]
-    case Err extends ErrorOr[Nothing]
+    case Err(t: Throwable) extends ErrorOr[Nothing]
     
     
     def flatMap[Q](f: V ⇒ ErrorOr[Q]): ErrorOr[Q] =
       this match
-        case ErrorOr.Err      ⇒ ErrorOr.Err
-        case ErrorOr.Or(v)    ⇒ 
+        case ErrorOr.Err(t)      ⇒ ErrorOr.Err(t)
+        case ErrorOr.Or(v)       ⇒ 
           try
             f(v)
-          catch
-            case _            ⇒ ErrorOr.Err
+          catch 
+            case t: Throwable    ⇒ ErrorOr.Err(t)
     
     
     def map[Q](f: V ⇒ Q): ErrorOr[Q] =
       this match
-        case ErrorOr.Err      ⇒ ErrorOr.Err
-        case ErrorOr.Or(v)    ⇒
+        case ErrorOr.Err(t)      ⇒ ErrorOr.Err(t)
+        case ErrorOr.Or(v)       ⇒
           try
             ErrorOr.Or(f(v))
           catch
-            case _            ⇒ ErrorOr.Err
+            case t: Throwable    ⇒ ErrorOr.Err(t)
       
   
   object ErrorOr:
     def apply[V](v: V): ErrorOr[V] =
-      if v.isInstanceOf[Throwable] then ErrorOr.Err else ErrorOr.Or(v)
+      if v.isInstanceOf[Throwable] then ErrorOr.Err(v.asInstanceOf[Throwable]) else ErrorOr.Or(v)
       
   
