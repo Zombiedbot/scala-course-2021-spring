@@ -1,5 +1,6 @@
 package karazin.scala.users.group.week2.homework
-
+import scala.language.implicitConversions
+import scala.util.control.NonFatal
 /* 
   Custom implementation of Option (Maybe monad in Haskell)
   Implemented via Scala 3 way for Algebraic Data Types (ADT)
@@ -24,7 +25,7 @@ object adt:
           try
             f(v)
           catch
-            case t: Throwable    ⇒ ErrorOr.Err(t)
+            case NonFatal(t)    ⇒ ErrorOr.Err(t)
 
 
     def map[Q](f: V ⇒ Q): ErrorOr[Q] =
@@ -34,7 +35,7 @@ object adt:
           try
             ErrorOr.Or(f(v))
           catch
-            case t: Throwable    ⇒ ErrorOr.Err(t)
+            case NonFatal(t)    ⇒ ErrorOr.Err(t)
   
     /* 
       The method is used for filtering
@@ -53,7 +54,7 @@ object adt:
             else
               null
           catch
-            case t: Throwable       ⇒ ErrorOr.Err(t)
+            case NonFatal(t)       ⇒ ErrorOr.Err(t)
   
     /* 
       The method is used for getting rid of internal box
@@ -80,7 +81,7 @@ object adt:
       
   // Companion object to define constructor
   object ErrorOr:
-    def apply[V](v: V): ErrorOr[V] =
-      if v.isInstanceOf[Throwable] then ErrorOr.Err(v.asInstanceOf[Throwable]) else ErrorOr.Or(v)
+    def apply[V](v: V)(implicit ev: V <:< Throwable = null) : ErrorOr[V] =
+      Option(ev).fold[ErrorOr[V]](ErrorOr.Or(v))(_ => ErrorOr.Err(v))
       
   

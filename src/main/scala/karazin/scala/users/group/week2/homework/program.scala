@@ -6,7 +6,17 @@ import model._
 import services._
 
 object program:
-  
+  /*
+   Print all view for all user's posts if they exists
+  */
+  def printPostsViews(): ErrorOr[List[PostView]] = {
+    for
+      postViews     ← getPostsViews() 
+    do print(postViews)
+    for
+      postViews     ← getPostsViews()
+    yield postViews
+  }
   /*
    Getting view for all user's posts if they exists
   */
