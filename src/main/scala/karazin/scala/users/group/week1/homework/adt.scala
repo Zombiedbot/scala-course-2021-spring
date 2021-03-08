@@ -1,5 +1,5 @@
 package karazin.scala.users.group.week1.homework
-
+import scala.util.control.NonFatal
 /* 
   Custom implementation of Option (Maybe monad in Haskell)
   Implemented via Scala 3 way for Algebraic Data Types (ADT)
@@ -24,7 +24,7 @@ object adt:
           try
             f(v)
           catch 
-            case t: Throwable    ⇒ ErrorOr.Err(t)
+            case NonFatal(t)    ⇒ ErrorOr.Err(t)
     
     
     def map[Q](f: V ⇒ Q): ErrorOr[Q] =
@@ -34,7 +34,7 @@ object adt:
           try
             ErrorOr.Or(f(v))
           catch
-            case t: Throwable    ⇒ ErrorOr.Err(t)
+            case NonFatal(t)    ⇒ ErrorOr.Err(t)
       
   
   object ErrorOr:
