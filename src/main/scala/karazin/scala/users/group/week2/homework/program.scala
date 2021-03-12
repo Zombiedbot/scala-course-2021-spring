@@ -4,6 +4,7 @@ package karazin.scala.users.group.week2.homework
 import adt._
 import model._
 import services._
+import scala.language.postfixOps
 
 object program:
   /*
@@ -11,25 +12,27 @@ object program:
   */
   def printPostsViews(): ErrorOr[List[PostView]] = {
     for
-      postViews     ← getPostsViews() 
-    do print(postViews)
-    for
       postViews     ← getPostsViews()
-    yield postViews
+    yield {
+      postViews.foreach(print) 
+      postViews
+    }
   }
   /*
    Getting view for all user's posts if they exists
   */
-  // HELP: I don't know how to do it right. It looks like shit :)
+  // I chose to skip errors
   def getPostsViews(): ErrorOr[List[PostView]] = {
     for
       profile        ← getUserProfile()
       posts          ← getPosts(profile.userId)
       if posts.nonEmpty
       postsView      ← ErrorOr( posts map { post ⇒ getPostView(post) } )
-      clearPostsView ← ErrorOr( postsView filter { p => p.unpack().isInstanceOf[PostView] })
-      clearer        ← ErrorOr( clearPostsView map {p => p.unpack().asInstanceOf[PostView] })
-    yield clearer
+    yield postsView.foldLeft(List[PostView]()) { (acc, elem) =>
+      elem match 
+        case ErrorOr.Or(v)    => acc ::: List[PostView](v)
+        case _                => acc
+    }
   }
 
   /* 

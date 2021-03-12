@@ -74,11 +74,6 @@ object adt:
         case ErrorOr.Err(t)     ⇒ ()
         case ErrorOr.Or(v)      ⇒ f(v)
       
-    def unpack(): Any =
-      this match 
-        case ErrorOr.Or(v)      ⇒ v
-        case ErrorOr.Err(t)     ⇒ t 
-      
   // Companion object to define constructor
   object ErrorOr:
     def apply[V](v: V)(implicit ev: V <:< Throwable = null) : ErrorOr[V] =
