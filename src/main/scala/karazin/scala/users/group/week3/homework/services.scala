@@ -1,14 +1,10 @@
-/*
-
-Fix the code to make it compilable
-Write tests
-
 package karazin.scala.users.group.week3.homework
 
 import java.util.UUID
 import scala.concurrent.Future
 import scala.util.Success
 import scala.util.Failure
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import karazin.scala.users.group.week3.homework.model._
 
@@ -47,5 +43,3 @@ object services:
       Thread.sleep(500)
       Share(userId = UUID.randomUUID(), postId = UUID.randomUUID()) :: Nil
     }
-    
- */

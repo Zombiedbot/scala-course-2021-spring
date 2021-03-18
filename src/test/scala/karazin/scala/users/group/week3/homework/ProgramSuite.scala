@@ -2,19 +2,19 @@ package karazin.scala.users.group.week3.homework
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import karazin.scala.users.group.week3.homework.model._
+import karazin.scala.users.group.week3.homework.program._
 
-/*
-  Write test for all programs in karazin.scala.users.group.week3.homework.program
+import java.util.UUID
 
-  Review:
-    • https://scalameta.org/munit/docs/tests.html
-    • https://scalameta.org/munit/docs/assertions.html
- */
+class ProgramSuite extends munit.FunSuite {
 
-class ProgramSuite extends munit.FunSuite:
-  
-  test("successful async test example") {
+  test("getPostView result") {
     Future {
-      assertEquals(42, 42)
+      val getPostViewService      = getPostView(Post(userId = UUID.randomUUID(), postId = UUID.randomUUID()))
+      for
+        postView     <- getPostViewService 
+      yield assert(postView.isInstanceOf[PostView])
     }
   }
+}
