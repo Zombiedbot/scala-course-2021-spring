@@ -44,17 +44,8 @@ object adt:
       Make sure that in case of failing the method with exception
       no exception is thrown but the case for an error is returned
      */
-    def withFilter(p: V => Boolean): ErrorOr[V] =
-      this match
-        case ErrorOr.Err(t)         ⇒ ErrorOr.Err(t)
-        case ErrorOr.Or(v)          ⇒
-          try
-            if p(v)
-              ErrorOr.Or(v)
-            else
-              null
-          catch
-            case NonFatal(t)       ⇒ ErrorOr.Err(t)
+    
+    def withFilter(p: V => Boolean): ErrorOr[V] = ???
   
     /* 
       The method is used for getting rid of internal box

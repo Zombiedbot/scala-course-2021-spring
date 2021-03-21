@@ -30,7 +30,7 @@ object program:
       postsView      ← ErrorOr( posts map { post ⇒ getPostView(post) } )
     yield postsView.foldLeft(List[PostView]()) { (acc, elem) =>
       elem match 
-        case ErrorOr.Or(v)    => acc ::: List[PostView](v)
+        case ErrorOr.Or(v)    => v :: acc
         case _                => acc
     }
   }
