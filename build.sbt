@@ -10,9 +10,8 @@ lazy val root = project
 
 lazy val dependencies =
     cats ++
-    `cats-effect`
-
-testFrameworks += new TestFramework("munit.Framework")
+    `cats-effect` ++
+    munit
 
 lazy val commonSettings = Seq(
     scalaVersion := "3.0.0-M3",
