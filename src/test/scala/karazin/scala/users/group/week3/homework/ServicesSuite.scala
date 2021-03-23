@@ -14,18 +14,23 @@ class ServicesSuite extends munit.FunSuite {
       val getUserProfileService  = getUserProfile()
       for
         profile     <- getUserProfileService
-      yield assert(profile.isInstanceOf[UserProfile])
+      yield profile match
+        case UserProfile(userId)  => assert(true)
+        case null                 => fail("Wrong result")
     }
   }
 
   test("getPosts result") {
     Future {
-      val getPostsService = getPosts(UUID.randomUUID())
+      val userId = UUID.randomUUID()
+      val getPostsService = getPosts(userId)
       for
         posts    <- getPostsService
       yield assert(
         posts.foldLeft(true) {(acc, elem) => {
-          elem.isInstanceOf[Post] && acc
+          elem match
+            case Post(`userId`, _)     => acc
+            case _                     => false
         }}
       )
     }
@@ -33,12 +38,15 @@ class ServicesSuite extends munit.FunSuite {
 
   test("getComments result") {
     Future {
-      val getCommentsService = getComments(UUID.randomUUID())
+      val postId = UUID.randomUUID()
+      val getCommentsService = getComments(postId)
       for
         comments    <- getCommentsService
       yield assert(
         comments.foldLeft(true) {(acc, elem) => {
-          elem.isInstanceOf[Comment] && acc
+          elem match
+            case Comment(_, `postId`)  => acc
+            case _                     => false
         }}
       )
     }
@@ -46,12 +54,15 @@ class ServicesSuite extends munit.FunSuite {
 
   test("getLikes result") {
     Future {
-      val getLikesService = getLikes(UUID.randomUUID())
+      val postId = UUID.randomUUID()
+      val getLikesService = getLikes(postId)
       for
         likes       <- getLikesService
       yield assert(
         likes.foldLeft(true) {(acc, elem) => {
-          elem.isInstanceOf[Like] && acc
+          elem match
+            case Like(_, `postId`)     => acc;
+            case _                     => false;
         }}
       )
     }
@@ -59,12 +70,15 @@ class ServicesSuite extends munit.FunSuite {
 
   test("getShares result") {
     Future {
-      val getSharesService = getShares(UUID.randomUUID())
+      val postId = UUID.randomUUID()
+      val getSharesService = getShares(postId)
       for
         shares       <- getSharesService
       yield assert(
         shares.foldLeft(true) {(acc, elem) => {
-          elem.isInstanceOf[Share] && acc
+          elem match
+            case Share(_, `postId`)    => acc;
+            case _                     => false;
         }}
       )
     }

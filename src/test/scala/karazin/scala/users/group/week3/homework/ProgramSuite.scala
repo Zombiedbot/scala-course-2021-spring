@@ -11,10 +11,14 @@ class ProgramSuite extends munit.FunSuite {
 
   test("getPostView result") {
     Future {
-      val getPostViewService      = getPostView(Post(userId = UUID.randomUUID(), postId = UUID.randomUUID()))
+      val userId = UUID.randomUUID()
+      val postId = UUID.randomUUID()
+      val getPostViewService = getPostView(Post(userId, postId))
       for
         postView     <- getPostViewService 
-      yield assert(postView.isInstanceOf[PostView])
+      yield postView match
+        case PostView(Post(`userId`, `postId`), _, _, _)  => assert(true)
+        case _                                            => fail("Wrong result")
     }
   }
 }
