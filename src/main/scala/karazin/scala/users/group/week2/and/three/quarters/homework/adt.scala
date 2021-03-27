@@ -14,6 +14,12 @@ import scala.util.{Try,Success,Failure}
 
 object adt:
 
+  extension [T](t: Try[T])
+    def toErrorOr: ErrorOr[T] =
+      t match
+        case Success(value)     ⇒ ErrorOr.Or(value)
+        case Failure(exception) ⇒ ErrorOr.Err(exception) 
+
   enum ErrorOr[+V]:
 
     // Added to make it compilable. Remove it.
@@ -23,7 +29,7 @@ object adt:
     def flatMap[Q](f: V ⇒ ErrorOr[Q]): ErrorOr[Q] =
       this match
         case ErrorOr.Err(t)      ⇒ ErrorOr.Err(t)
-        case ErrorOr.Or(v)       ⇒ ErrorOr.fromTry(Try(f(v)))
+        case ErrorOr.Or(v)       ⇒ ErrorOr.fromTry(Try { f(v) })
 
 
     def map[Q](f: V ⇒ Q): ErrorOr[Q] =
