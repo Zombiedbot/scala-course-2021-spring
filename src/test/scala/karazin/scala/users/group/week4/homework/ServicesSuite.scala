@@ -1,7 +1,12 @@
 package karazin.scala.users.group.week4.homework
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Future}
+import karazin.scala.users.group.week4.homework.services._
+import karazin.scala.users.group.week4.homework.model._
+
+import java.util.UUID
+import java.util.concurrent.Executors
 
 /*
   Write test for all service in karazin.scala.users.group.week4.homework.services
@@ -14,11 +19,93 @@ import scala.concurrent.Future
  */
 
 class ServicesSuite extends munit.FunSuite:
-  
-  test("failed async test example") {
+
+  val sigleThreadPoolContext = 
+    new Fixture[ExecutionContext]("files") {
+      var threadpool: ExecutionContextExecutorService = null
+      def apply() = threadpool
+      override def beforeEach(context: BeforeEach): Unit = {
+        threadpool = ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor)
+      }
+      override def afterEach(context: AfterEach): Unit = {
+        // Always gets called, even if test failed.
+        threadpool.shutdown()
+      }
+    }
+  override def munitFixtures = List(sigleThreadPoolContext)
+
+  test("getUserProfile result") {
     Future {
-      assertEquals(42, 43)
+      val getUserProfileService  = getUserProfile(sigleThreadPoolContext())
+      for
+        profile     <- getUserProfileService
+      yield profile match
+        case UserProfile(userId)  => assert(true)
+        case null                 => fail("Wrong result")
     }
   }
 
+  test("getPosts result") {
+    Future {
+      val userId = UUID.randomUUID()
+      val getPostsService = getPosts(userId)(sigleThreadPoolContext())
+      for
+        posts    <- getPostsService
+      yield assert(
+        posts.foldLeft(true) {(acc, elem) => {
+          elem match
+            case Post(`userId`, _)     => acc
+            case _                     => false
+        }}
+      )
+    }
+  }
+
+  test("getComments result") {
+    Future {
+      val postId = UUID.randomUUID()
+      val getCommentsService = getComments(postId)(sigleThreadPoolContext())
+      for
+        comments    <- getCommentsService
+      yield assert(
+        comments.foldLeft(true) {(acc, elem) => {
+          elem match
+            case Comment(_, `postId`)  => acc
+            case _                     => false
+        }}
+      )
+    }
+  }
+
+  test("getLikes result") {
+    Future {
+      val postId = UUID.randomUUID()
+      val getLikesService = getLikes(postId)(sigleThreadPoolContext())
+      for
+        likes       <- getLikesService
+      yield assert(
+        likes.foldLeft(true) {(acc, elem) => {
+          elem match
+            case Like(_, `postId`)     => acc;
+            case _                     => false;
+        }}
+      )
+    }
+  }
+
+  test("getShares result") {
+    Future {
+      val postId = UUID.randomUUID()
+      val getSharesService = getShares(postId)(sigleThreadPoolContext())
+      for
+        shares       <- getSharesService
+      yield assert(
+        shares.foldLeft(true) {(acc, elem) => {
+          elem match
+            case Share(_, `postId`)    => acc;
+            case _                     => false;
+        }}
+      )
+    }
+  }
   
