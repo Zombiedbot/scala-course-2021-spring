@@ -2,6 +2,7 @@ package karazin.scala.users.group.week2.and.three.quarters.homework
 
 import scala.util.control.NonFatal
 import scala.util.{Try,Success,Failure}
+import scala.language.postfixOps
 
 /* 
   Custom implementation of Option (Maybe monad in Haskell)
@@ -14,10 +15,10 @@ import scala.util.{Try,Success,Failure}
 
 object adt:
 
-  extension [T](t: Try[ErrorOr[T]])
+  extension [T](t: Try[T])
     def toErrorOr: ErrorOr[T] =
       t match
-        case Success(value)     ⇒ value
+        case Success(value)     ⇒ ErrorOr(value)
         case Failure(exception) ⇒ ErrorOr.Err(exception) 
 
   enum ErrorOr[+V]:
@@ -29,13 +30,13 @@ object adt:
     def flatMap[Q](f: V ⇒ ErrorOr[Q]): ErrorOr[Q] =
       this match
         case ErrorOr.Err(t)      ⇒ ErrorOr.Err(t)
-        case ErrorOr.Or(v)       ⇒ Try(f(v)).toErrorOr
+        case ErrorOr.Or(v)       ⇒ Try(f(v)).toErrorOr.flatten
 
 
     def map[Q](f: V ⇒ Q): ErrorOr[Q] =
       this match
         case ErrorOr.Err(t)      ⇒ ErrorOr.Err(t)
-        case ErrorOr.Or(v)       ⇒ ErrorOr.fromTry(Try(ErrorOr(f(v))))
+        case ErrorOr.Or(v)       ⇒ ErrorOr fromTry Try(f(v))
 
     /* 
       The method is used for filtering
@@ -74,9 +75,9 @@ object adt:
       The method is used for creating `ErroOr` instance from `Try`
       Provide a type parameter, an argument and a result type
     */
-    def fromTry[V](res: Try[ErrorOr[V]]) : ErrorOr[V] = 
+    def fromTry[V](res: Try[V]) : ErrorOr[V] = 
       res match
-        case Success(value)     ⇒ value
+        case Success(value)     ⇒ ErrorOr.Or(value)
         case Failure(exception) ⇒ ErrorOr.Err(exception)
       
   
