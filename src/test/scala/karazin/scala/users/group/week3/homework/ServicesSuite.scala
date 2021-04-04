@@ -10,23 +10,17 @@ import java.util.UUID
 class ServicesSuite extends munit.FunSuite {
 
   test("getUserProfile result") {
-    Future {
-      val getUserProfileService  = getUserProfile()
-      for
-        profile     <- getUserProfileService
-      yield profile match
-        case UserProfile(userId)  => assert(true)
-        case null                 => fail("Wrong result")
-    }
+      getUserProfile() map { profile =>
+        profile match
+          case UserProfile(_)     => assert(true)
+          case null               => fail("Wrong result")
+      }
   }
 
   test("getPosts result") {
-    Future {
-      val userId = UUID.randomUUID()
-      val getPostsService = getPosts(userId)
-      for
-        posts    <- getPostsService
-      yield assert(
+    val userId = UUID.randomUUID()
+    getPosts(userId) map { posts =>
+      assert(
         posts.foldLeft(true) {(acc, elem) => {
           elem match
             case Post(`userId`, _)     => acc
@@ -37,12 +31,9 @@ class ServicesSuite extends munit.FunSuite {
   }
 
   test("getComments result") {
-    Future {
-      val postId = UUID.randomUUID()
-      val getCommentsService = getComments(postId)
-      for
-        comments    <- getCommentsService
-      yield assert(
+    val postId = UUID.randomUUID()
+    getComments(postId) map {comments =>
+      assert(
         comments.foldLeft(true) {(acc, elem) => {
           elem match
             case Comment(_, `postId`)  => acc
@@ -53,32 +44,26 @@ class ServicesSuite extends munit.FunSuite {
   }
 
   test("getLikes result") {
-    Future {
-      val postId = UUID.randomUUID()
-      val getLikesService = getLikes(postId)
-      for
-        likes       <- getLikesService
-      yield assert(
+    val postId = UUID.randomUUID()
+    getLikes(postId) map { likes =>
+      assert(
         likes.foldLeft(true) {(acc, elem) => {
           elem match
-            case Like(_, `postId`)     => acc;
-            case _                     => false;
+            case Like(_, `postId`)     => acc
+            case _                     => false
         }}
       )
     }
   }
 
   test("getShares result") {
-    Future {
-      val postId = UUID.randomUUID()
-      val getSharesService = getShares(postId)
-      for
-        shares       <- getSharesService
-      yield assert(
+    val postId = UUID.randomUUID()
+    getShares(postId) map { shares =>
+      assert(
         shares.foldLeft(true) {(acc, elem) => {
           elem match
-            case Share(_, `postId`)    => acc;
-            case _                     => false;
+            case Share(_, `postId`)    => acc
+            case _                     => false
         }}
       )
     }

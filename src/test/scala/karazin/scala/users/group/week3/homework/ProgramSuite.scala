@@ -10,13 +10,10 @@ import java.util.UUID
 class ProgramSuite extends munit.FunSuite {
 
   test("getPostView result") {
-    Future {
-      val userId = UUID.randomUUID()
-      val postId = UUID.randomUUID()
-      val getPostViewService = getPostView(Post(userId, postId))
-      for
-        postView     <- getPostViewService 
-      yield postView match
+    val userId = UUID.randomUUID()
+    val postId = UUID.randomUUID()
+    getPostView(Post(userId, postId)) map { postView =>
+      postView match
         case PostView(Post(`userId`, `postId`), _, _, _)  => assert(true)
         case _                                            => fail("Wrong result")
     }
