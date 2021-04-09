@@ -4,16 +4,16 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import karazin.scala.users.group.week3.homework.services._
 import karazin.scala.users.group.week3.homework.model._
+import scala.util.{Try,Success,Failure}
 
 import java.util.UUID
 
 class ServicesSuite extends munit.FunSuite {
 
   test("getUserProfile result") {
-      getUserProfile() map { profile =>
-        profile match
-          case UserProfile(_)     => assert(true)
-          case null               => fail("Wrong result")
+      getUserProfile() onComplete {
+        case Success(UserProfile(_))        => assert(true)
+        case _                              => fail("Wrong result")
       }
   }
 
