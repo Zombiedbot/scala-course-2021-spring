@@ -8,6 +8,7 @@ import java.util.UUID
 import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Future}
+import scala.util.{Try,Success,Failure}
 
 /*
   Write test for all programs in karazin.scala.users.group.week4.homework.program
@@ -36,28 +37,18 @@ class ProgramSuite extends munit.FunSuite:
   override def munitFixtures = List(sigleThreadPoolContext)
 
   test("getPostView result") {
-    Future {
-      val post = Post(UUID.randomUUID(), UUID.randomUUID())
-      val getPostViewService  = getPostView(post)(sigleThreadPoolContext())
-      for
-        postView     <- getPostViewService
-      yield postView match
-        case PostView(`post`, _, _, _)  => assert(true)
-        case _                          => fail("Wrong result")
+    val post = Post(UUID.randomUUID(), UUID.randomUUID())
+    val getPostViewService  = getPostView(post)(sigleThreadPoolContext())
+    getPostViewService onComplete {
+      case Success(PostView(`post`, _, _, _)) => assert(true)
+      case _                                  => fail("Exception Thrown or wrong type")
     }
   }
 
   test("getPostViews result") {
-    Future {
-      val getPostsViewService  = getPostsViews(sigleThreadPoolContext())
-      for
-        postsView     <- getPostsViews
-      yield assert(
-        postsView.foldLeft(true) {(acc, elem) => {
-          elem match
-            case PostView(_, _, _, _)     => acc
-            case null                     => false
-        }}
-      )
+    val getPostsViewService  = getPostsViews(sigleThreadPoolContext())
+    getPostsViews onComplete {
+      case Success(listPostViews: List[PostView]) => assert (true)
+      case _                                      => fail("Exception Thrown or wrong type")
     }
   }

@@ -13,6 +13,8 @@ import scala.language.postfixOps
 object program:
   // Make sure that the result type is exactly `Future[List[PostView]]`
   // not `Future[List[Future[PostView]]]`
+
+  given ExecutionContext = ExecutionContext.global
   
   def getPostsViews(implicit ec: ExecutionContext): Future[List[PostView]] =
     
@@ -22,7 +24,7 @@ object program:
     for
       profile        ← getUserProfileService
       posts          ← getPosts(profile.userId)(fixedThreadPoolContext)
-      postsView      ← Future(posts map { post ⇒ getPostView(post) })
+      postsView      = posts map { post ⇒ getPostView(post) }
       postViews      ← Future.foldLeft(postsView)(List[PostView]()) { (acc, elem) => elem :: acc }
     yield postViews
   

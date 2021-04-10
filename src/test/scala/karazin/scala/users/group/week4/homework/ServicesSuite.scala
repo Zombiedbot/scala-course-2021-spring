@@ -7,6 +7,7 @@ import karazin.scala.users.group.week4.homework.model._
 
 import java.util.UUID
 import java.util.concurrent.Executors
+import scala.util.{Try,Success,Failure}
 
 /*
   Write test for all service in karazin.scala.users.group.week4.homework.services
@@ -35,77 +36,74 @@ class ServicesSuite extends munit.FunSuite:
   override def munitFixtures = List(sigleThreadPoolContext)
 
   test("getUserProfile result") {
-    Future {
-      val getUserProfileService  = getUserProfile(sigleThreadPoolContext())
-      for
-        profile     <- getUserProfileService
-      yield profile match
-        case UserProfile(userId)  => assert(true)
-        case null                 => fail("Wrong result")
+    val getUserProfileService  = getUserProfile(sigleThreadPoolContext())
+    getUserProfileService onComplete {
+      case Success(UserProfile(_))  => assert (true)
+      case _                        => fail("Exception Thrown or wrong type")
     }
   }
 
   test("getPosts result") {
-    Future {
       val userId = UUID.randomUUID()
       val getPostsService = getPosts(userId)(sigleThreadPoolContext())
-      for
-        posts    <- getPostsService
-      yield assert(
-        posts.foldLeft(true) {(acc, elem) => {
-          elem match
-            case Post(`userId`, _)     => acc
-            case _                     => false
-        }}
-      )
-    }
+      getPostsService onComplete {
+        case Success(listPost: List[Post]) => assert (
+            listPost.foldLeft (true) {
+              (acc, elem) => {
+                elem match
+                  case Post (`userId`, _) => acc
+                  case _                  => false
+              }
+            })
+        case _                 => fail("Exception Thrown or wrong type")
+      }
   }
 
   test("getComments result") {
-    Future {
-      val postId = UUID.randomUUID()
-      val getCommentsService = getComments(postId)(sigleThreadPoolContext())
-      for
-        comments    <- getCommentsService
-      yield assert(
-        comments.foldLeft(true) {(acc, elem) => {
-          elem match
-            case Comment(_, `postId`)  => acc
-            case _                     => false
-        }}
-      )
+    val postId = UUID.randomUUID()
+    val getCommentsService = getComments(postId)(sigleThreadPoolContext())
+    getCommentsService onComplete {
+      case Success(listComments: List[Comment]) => assert (
+        listComments.foldLeft (true) {
+          (acc, elem) => {
+            elem match
+              case Comment(_, `postId`) => acc
+              case _                    => false
+          }
+        })
+      case _                 => fail("Exception Thrown or wrong type")
     }
   }
 
   test("getLikes result") {
-    Future {
-      val postId = UUID.randomUUID()
-      val getLikesService = getLikes(postId)(sigleThreadPoolContext())
-      for
-        likes       <- getLikesService
-      yield assert(
-        likes.foldLeft(true) {(acc, elem) => {
-          elem match
-            case Like(_, `postId`)     => acc;
-            case _                     => false;
-        }}
-      )
+    val postId = UUID.randomUUID()
+    val getLikesService = getLikes(postId)(sigleThreadPoolContext())
+    getLikesService onComplete {
+      case Success(listLikes: List[Like]) => assert (
+        listLikes.foldLeft (true) {
+          (acc, elem) => {
+            elem match
+              case Like(_, `postId`)    => acc
+              case _                    => false
+          }
+        })
+      case _                 => fail("Exception Thrown or wrong type")
     }
   }
 
   test("getShares result") {
-    Future {
-      val postId = UUID.randomUUID()
-      val getSharesService = getShares(postId)(sigleThreadPoolContext())
-      for
-        shares       <- getSharesService
-      yield assert(
-        shares.foldLeft(true) {(acc, elem) => {
-          elem match
-            case Share(_, `postId`)    => acc;
-            case _                     => false;
-        }}
-      )
+    val postId = UUID.randomUUID()
+    val getSharesService = getShares(postId)(sigleThreadPoolContext())
+    getSharesService onComplete {
+      case Success(listShares: List[Share]) => assert (
+        listShares.foldLeft (true) {
+          (acc, elem) => {
+            elem match
+              case Share(_, `postId`)    => acc
+              case _                    => false
+          }
+        })
+      case _                 => fail("Exception Thrown or wrong type")
     }
   }
   

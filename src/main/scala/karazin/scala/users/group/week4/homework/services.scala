@@ -32,21 +32,21 @@ object services:
       Post(userId, postId = UUID.randomUUID()) :: Nil
     }
   
-  def getComments(postId: UUID)(implicit ec: ExecutionContext): Future[List[Comment]] = 
+  def getComments(postId: UUID)(implicit ec: ExecutionContext): Future[List[Comment]] =
     Future {
       // Emulating time consumed operation
       Thread.sleep(5000)
       Comment(userId = UUID.randomUUID(), postId) :: Nil
     }
   
-  def getLikes(postId: UUID)(implicit ec: ExecutionContext): Future[List[Like]] = 
+  def getLikes(postId: UUID)(implicit ec: ExecutionContext): Future[List[Like]] =
     Future {
       // Emulating time consumed operation
       Thread.sleep(2000)
       Like(userId = UUID.randomUUID(), postId) :: Nil
     }
   
-  def getShares(postId: UUID)(implicit ec: ExecutionContext): Future[List[Share]] = 
+  def getShares(postId: UUID)(implicit ec: ExecutionContext): Future[List[Share]] =
     Future {
       // Emulating time consumed operation
       Thread.sleep(500)
