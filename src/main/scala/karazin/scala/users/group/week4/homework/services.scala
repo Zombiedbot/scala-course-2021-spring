@@ -22,31 +22,31 @@ import karazin.scala.users.group.week4.homework.model._
 
 object services:
   
-  def getUserProfile(implicit ec: ExecutionContext): Future[UserProfile] =
+  def getUserProfile(using ec: ExecutionContext): Future[UserProfile] =
     Future {
       UserProfile(UUID.randomUUID())
     }
   
-  def getPosts(userId: UUID)(implicit ec: ExecutionContext): Future[List[Post]] =
+  def getPosts(userId: UUID)(using ec: ExecutionContext): Future[List[Post]] =
     Future {
       Post(userId, postId = UUID.randomUUID()) :: Nil
     }
   
-  def getComments(postId: UUID)(implicit ec: ExecutionContext): Future[List[Comment]] =
+  def getComments(postId: UUID)(using ec: ExecutionContext): Future[List[Comment]] =
     Future {
       // Emulating time consumed operation
       Thread.sleep(5000)
       Comment(userId = UUID.randomUUID(), postId) :: Nil
     }
   
-  def getLikes(postId: UUID)(implicit ec: ExecutionContext): Future[List[Like]] =
+  def getLikes(postId: UUID)(using ec: ExecutionContext): Future[List[Like]] =
     Future {
       // Emulating time consumed operation
       Thread.sleep(2000)
       Like(userId = UUID.randomUUID(), postId) :: Nil
     }
   
-  def getShares(postId: UUID)(implicit ec: ExecutionContext): Future[List[Share]] =
+  def getShares(postId: UUID)(using ec: ExecutionContext): Future[List[Share]] =
     Future {
       // Emulating time consumed operation
       Thread.sleep(500)

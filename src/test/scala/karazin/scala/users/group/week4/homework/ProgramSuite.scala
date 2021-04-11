@@ -38,17 +38,18 @@ class ProgramSuite extends munit.FunSuite:
 
   test("getPostView result") {
     val post = Post(UUID.randomUUID(), UUID.randomUUID())
-    val getPostViewService  = getPostView(post)(sigleThreadPoolContext())
-    getPostViewService onComplete {
-      case Success(PostView(`post`, _, _, _)) => assert(true)
-      case _                                  => fail("Exception Thrown or wrong type")
+    val getPostViewService  = getPostView(post)(using sigleThreadPoolContext())
+    getPostViewService map { res => res match
+      case PostView(`post`, _, _, _)          => assert(true)
+      case _                                  => fail("Wrong result")
+    } recover {
+      case error => fail("Exception Thrown")
     }
   }
 
   test("getPostViews result") {
-    val getPostsViewService  = getPostsViews(sigleThreadPoolContext())
-    getPostsViews onComplete {
-      case Success(listPostViews: List[PostView]) => assert (true)
-      case _                                      => fail("Exception Thrown or wrong type")
+    val getPostsViewService  = getPostsViews(using sigleThreadPoolContext())
+    getPostsViews map { res => assert (true) } recover {
+      case error => fail("Exception Thrown")
     }
   }

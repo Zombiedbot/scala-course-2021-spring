@@ -36,74 +36,75 @@ class ServicesSuite extends munit.FunSuite:
   override def munitFixtures = List(sigleThreadPoolContext)
 
   test("getUserProfile result") {
-    val getUserProfileService  = getUserProfile(sigleThreadPoolContext())
-    getUserProfileService onComplete {
-      case Success(UserProfile(_))  => assert (true)
-      case _                        => fail("Exception Thrown or wrong type")
+    val getUserProfileService  = getUserProfile(using sigleThreadPoolContext())
+    getUserProfileService map { res =>
+      assert(true)
+    } recover {
+      case error => fail("Exception Thrown")
     }
   }
 
   test("getPosts result") {
       val userId = UUID.randomUUID()
-      val getPostsService = getPosts(userId)(sigleThreadPoolContext())
-      getPostsService onComplete {
-        case Success(listPost: List[Post]) => assert (
-            listPost.foldLeft (true) {
-              (acc, elem) => {
-                elem match
-                  case Post (`userId`, _) => acc
-                  case _                  => false
-              }
-            })
-        case _                 => fail("Exception Thrown or wrong type")
+      val getPostsService = getPosts(userId)(using sigleThreadPoolContext())
+      getPostsService map { listPost => assert (
+        listPost.foldLeft (true) {
+          (acc, elem) => {
+            elem match
+              case Post (`userId`, _) => acc
+              case _                  => false
+          }
+        })
+      } recover {
+        case error => fail("Exception Thrown")
       }
   }
 
   test("getComments result") {
     val postId = UUID.randomUUID()
-    val getCommentsService = getComments(postId)(sigleThreadPoolContext())
-    getCommentsService onComplete {
-      case Success(listComments: List[Comment]) => assert (
-        listComments.foldLeft (true) {
-          (acc, elem) => {
-            elem match
-              case Comment(_, `postId`) => acc
-              case _                    => false
-          }
-        })
-      case _                 => fail("Exception Thrown or wrong type")
+    val getCommentsService = getComments(postId)(using sigleThreadPoolContext())
+    getCommentsService map { listComments => assert (
+      listComments.foldLeft (true) {
+        (acc, elem) => {
+          elem match
+            case Comment(_, `postId`) => acc
+            case _                    => false
+        }
+      })
+    } recover {
+      case error => fail("Exception Thrown")
     }
   }
 
   test("getLikes result") {
     val postId = UUID.randomUUID()
-    val getLikesService = getLikes(postId)(sigleThreadPoolContext())
-    getLikesService onComplete {
-      case Success(listLikes: List[Like]) => assert (
-        listLikes.foldLeft (true) {
-          (acc, elem) => {
-            elem match
-              case Like(_, `postId`)    => acc
-              case _                    => false
-          }
-        })
-      case _                 => fail("Exception Thrown or wrong type")
+    val getLikesService = getLikes(postId)(using sigleThreadPoolContext())
+    getLikesService map { listLikes => assert (
+      listLikes.foldLeft (true) {
+        (acc, elem) => {
+          elem match
+            case Like(_, `postId`)    => acc
+            case _                    => false
+        }
+      })
+    } recover {
+      case error => fail("Exception Thrown")
     }
   }
 
   test("getShares result") {
     val postId = UUID.randomUUID()
-    val getSharesService = getShares(postId)(sigleThreadPoolContext())
-    getSharesService onComplete {
-      case Success(listShares: List[Share]) => assert (
-        listShares.foldLeft (true) {
-          (acc, elem) => {
-            elem match
-              case Share(_, `postId`)    => acc
-              case _                    => false
-          }
-        })
-      case _                 => fail("Exception Thrown or wrong type")
+    val getSharesService = getShares(postId)(using sigleThreadPoolContext())
+    getSharesService map { listShares => assert (
+      listShares.foldLeft (true) {
+        (acc, elem) => {
+          elem match
+            case Share(_, `postId`)    => acc
+            case _                    => false
+        }
+      })
+    } recover {
+      case error => fail("Exception Thrown")
     }
   }
   
