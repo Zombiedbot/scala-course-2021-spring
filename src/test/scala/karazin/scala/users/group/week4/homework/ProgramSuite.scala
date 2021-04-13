@@ -49,7 +49,9 @@ class ProgramSuite extends munit.FunSuite:
 
   test("getPostViews result") {
     val getPostsViewService  = getPostsViews(using sigleThreadPoolContext())
-    getPostsViews map { res => assert (true) } recover {
+    getPostsViews map { res => res match
+      case l: List[PostView]                  => assert(true) 
+    } recover {
       case error => fail("Exception Thrown")
     }
   }

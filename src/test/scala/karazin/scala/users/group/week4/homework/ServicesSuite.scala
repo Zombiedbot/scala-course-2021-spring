@@ -37,8 +37,8 @@ class ServicesSuite extends munit.FunSuite:
 
   test("getUserProfile result") {
     val getUserProfileService  = getUserProfile(using sigleThreadPoolContext())
-    getUserProfileService map { res =>
-      assert(true)
+    getUserProfileService map { res => res match
+      case UserProfile(_)                      => assert(true)
     } recover {
       case error => fail("Exception Thrown")
     }
@@ -47,14 +47,15 @@ class ServicesSuite extends munit.FunSuite:
   test("getPosts result") {
       val userId = UUID.randomUUID()
       val getPostsService = getPosts(userId)(using sigleThreadPoolContext())
-      getPostsService map { listPost => assert (
-        listPost.foldLeft (true) {
-          (acc, elem) => {
-            elem match
-              case Post (`userId`, _) => acc
-              case _                  => false
-          }
-        })
+      getPostsService map { res => res match
+        case listPost: List[Post]          => assert (
+          listPost.foldLeft (true) {
+            (acc, elem) => {
+              elem match
+                case Post (`userId`, _) => acc
+                case _                  => false
+            }
+          })
       } recover {
         case error => fail("Exception Thrown")
       }
@@ -63,14 +64,15 @@ class ServicesSuite extends munit.FunSuite:
   test("getComments result") {
     val postId = UUID.randomUUID()
     val getCommentsService = getComments(postId)(using sigleThreadPoolContext())
-    getCommentsService map { listComments => assert (
-      listComments.foldLeft (true) {
-        (acc, elem) => {
-          elem match
-            case Comment(_, `postId`) => acc
-            case _                    => false
-        }
-      })
+    getCommentsService map { res => res match
+      case listComments: List[Comment]      => assert (
+        listComments.foldLeft (true) {
+          (acc, elem) => {
+            elem match
+              case Comment(_, `postId`) => acc
+              case _                    => false
+          }
+        })
     } recover {
       case error => fail("Exception Thrown")
     }
@@ -79,14 +81,15 @@ class ServicesSuite extends munit.FunSuite:
   test("getLikes result") {
     val postId = UUID.randomUUID()
     val getLikesService = getLikes(postId)(using sigleThreadPoolContext())
-    getLikesService map { listLikes => assert (
-      listLikes.foldLeft (true) {
-        (acc, elem) => {
-          elem match
-            case Like(_, `postId`)    => acc
-            case _                    => false
-        }
-      })
+    getLikesService map { res => res match
+      case listLikes: List[Like]         => assert (
+        listLikes.foldLeft (true) {
+          (acc, elem) => {
+            elem match
+              case Like(_, `postId`)    => acc
+              case _                    => false
+          }
+        })
     } recover {
       case error => fail("Exception Thrown")
     }
@@ -95,14 +98,15 @@ class ServicesSuite extends munit.FunSuite:
   test("getShares result") {
     val postId = UUID.randomUUID()
     val getSharesService = getShares(postId)(using sigleThreadPoolContext())
-    getSharesService map { listShares => assert (
-      listShares.foldLeft (true) {
-        (acc, elem) => {
-          elem match
-            case Share(_, `postId`)    => acc
-            case _                    => false
-        }
-      })
+    getSharesService map { res => res match
+      case listShares: List[Share]        => assert (
+        listShares.foldLeft (true) {
+          (acc, elem) => {
+            elem match
+              case Share(_, `postId`)    => acc
+              case _                    => false
+          }
+        })
     } recover {
       case error => fail("Exception Thrown")
     }
