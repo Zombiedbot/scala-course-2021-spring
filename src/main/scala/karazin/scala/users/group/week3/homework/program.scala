@@ -1,8 +1,3 @@
-/*
-
-Fix the code to make it compilable
-Write tests
-
 package karazin.scala.users.group.week3.homework
 
 import java.util.UUID
@@ -10,7 +5,10 @@ import scala.concurrent.Future
 import scala.util.Success
 import scala.util.Failure
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import karazin.scala.users.group.week3.homework.model._
+import karazin.scala.users.group.week3.homework.services._
 
 
 object program:
@@ -26,5 +24,3 @@ object program:
       likes     ← getLikesService
       shares    ← getSharesService
     yield PostView(post, comments, likes, shares)
-    
- */

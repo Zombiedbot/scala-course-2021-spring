@@ -2,21 +2,71 @@ package karazin.scala.users.group.week3.homework
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import karazin.scala.users.group.week3.homework.services._
+import karazin.scala.users.group.week3.homework.model._
+import scala.util.{Try,Success,Failure}
 
-/*
-  Write test for all service in karazin.scala.users.group.week3.homework.services
+import java.util.UUID
 
-  Review:
-    • https://scalameta.org/munit/docs/tests.html
-    • https://scalameta.org/munit/docs/assertions.html
- */
+class ServicesSuite extends munit.FunSuite {
 
-class ServicesSuite extends munit.FunSuite:
-  
-  test("failed async test example") {
-    Future {
-      assertEquals(42, 43)
+  test("getUserProfile result") {
+      getUserProfile() onComplete {
+        case Success(UserProfile(_))        => assert(true)
+        case _                              => fail("Wrong result")
+      }
+  }
+
+  test("getPosts result") {
+    val userId = UUID.randomUUID()
+    getPosts(userId) map { posts =>
+      assert(
+        posts.foldLeft(true) {(acc, elem) => {
+          elem match
+            case Post(`userId`, _)     => acc
+            case _                     => false
+        }}
+      )
     }
   }
 
+  test("getComments result") {
+    val postId = UUID.randomUUID()
+    getComments(postId) map {comments =>
+      assert(
+        comments.foldLeft(true) {(acc, elem) => {
+          elem match
+            case Comment(_, `postId`)  => acc
+            case _                     => false
+        }}
+      )
+    }
+  }
+
+  test("getLikes result") {
+    val postId = UUID.randomUUID()
+    getLikes(postId) map { likes =>
+      assert(
+        likes.foldLeft(true) {(acc, elem) => {
+          elem match
+            case Like(_, `postId`)     => acc
+            case _                     => false
+        }}
+      )
+    }
+  }
+
+  test("getShares result") {
+    val postId = UUID.randomUUID()
+    getShares(postId) map { shares =>
+      assert(
+        shares.foldLeft(true) {(acc, elem) => {
+          elem match
+            case Share(_, `postId`)    => acc
+            case _                     => false
+        }}
+      )
+    }
+  }
   
+}
