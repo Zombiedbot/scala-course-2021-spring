@@ -52,3 +52,28 @@ class GivensSuite extends munit.FunSuite:
         .encode("one" :: "two" :: "three" :: Nil), "[ \"one\", \"two\", \"three\" ]"
     )
   }
+
+  test("List Booleans JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[List[Boolean]]]
+        .encode(true :: false :: true :: Nil), "[ true, false, true ]"
+    )
+  }
+
+  test("List Integers JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[List[Int]]]
+        .encode(234 :: -13 :: 0 :: Nil), "[ 234, -13, 0 ]"
+    )
+  }
+
+  test("List Empty JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[List[Int]]]
+        .encode(Nil), "[ ]"
+    )
+  }
+
+  test("Map fails") {
+    compileErrors("summon[JsonStringEncoder[Map[String, Int]]].encode(Map(\"x\" -> 24, \"y\" -> 25, \"z\" -> 26))")
+  }

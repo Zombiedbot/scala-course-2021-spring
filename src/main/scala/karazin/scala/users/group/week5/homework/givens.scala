@@ -10,6 +10,10 @@ object givens:
   
   trait JsonStringEncoder[T]:
     def encode(elem: T): String
+    
+    extension(t: T)
+      def toJsonString(): String =
+        encode(t)
   
   given IntEncoder: JsonStringEncoder[Int] with
     def encode(elem: Int): String =
