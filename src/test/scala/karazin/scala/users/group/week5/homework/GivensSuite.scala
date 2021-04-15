@@ -1,5 +1,7 @@
 package karazin.scala.users.group.week5.homework
 
+import karazin.scala.users.group.week5.homework.givens.{given, _}
+
 import scala.concurrent.Future
 
 /*
@@ -23,6 +25,30 @@ import scala.concurrent.Future
  */
 class GivensSuite extends munit.FunSuite:
   
-  test("successful test example") {
-    assertEquals(42, 42)
+  test("Int JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[Int]]
+        .encode(42), "42"
+    )
+  }
+
+  test("Bool JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[Boolean]]
+        .encode(true), "true"
+    )
+  }
+
+  test("String JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[String]]
+        .encode("Some String"), "\"Some String\""
+    )
+  }
+
+  test("List String JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[List[String]]]
+        .encode("one" :: "two" :: "three" :: Nil), "[ \"one\", \"two\", \"three\" ]"
+    )
   }
