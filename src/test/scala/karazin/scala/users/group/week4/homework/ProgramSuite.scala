@@ -9,6 +9,7 @@ import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Future}
 import scala.util.{Try,Success,Failure}
+import utils._
 
 /*
   Write test for all programs in karazin.scala.users.group.week4.homework.program
@@ -35,9 +36,6 @@ class ProgramSuite extends munit.FunSuite:
       }
     }
   override def munitFixtures = List(sigleThreadPoolContext)
-  
-  private def checkList[V](list: List[V])(f: V => Unit) =
-    list foreach f
 
   test("getPostView result") {
     val post = Post(UUID.randomUUID(), UUID.randomUUID())
@@ -52,8 +50,8 @@ class ProgramSuite extends munit.FunSuite:
 
   test("getPostViews result") {
     val getPostsViewService  = getPostsViews(using sigleThreadPoolContext())
-    getPostsViews map {
-      case l: List[_]                  => checkList[PostView](l) { p => assert(true)}
+    getPostsViews map { list => 
+      checkList[PostView](list) { p => assert(true)}
     } recover {
       case error => fail("Exception Thrown")
     }

@@ -7,6 +7,7 @@ import karazin.scala.users.group.week4.homework.model._
 
 import java.util.UUID
 import java.util.concurrent.Executors
+import utils._
 import scala.util.{Try,Success,Failure}
 
 /*
@@ -35,9 +36,6 @@ class ServicesSuite extends munit.FunSuite:
     }
   override def munitFixtures = List(sigleThreadPoolContext)
 
-  private def checkList[V](list: List[V])(f: V => Unit) =
-    list foreach f
-
   test("getUserProfile result") {
     val getUserProfileService  = getUserProfile(using sigleThreadPoolContext())
     getUserProfileService map {
@@ -50,8 +48,8 @@ class ServicesSuite extends munit.FunSuite:
   test("getPosts result") {
       val userId = UUID.randomUUID()
       val getPostsService = getPosts(userId)(using sigleThreadPoolContext())
-      getPostsService map {
-        case listPost: List[_]          => checkList[Post](listPost) { p => 
+      getPostsService map { listPost => 
+        checkList[Post](listPost) { p => 
           assertEquals(userId, p.userId)
         }
       } recover {
@@ -62,8 +60,8 @@ class ServicesSuite extends munit.FunSuite:
   test("getComments result") {
     val postId = UUID.randomUUID()
     val getCommentsService = getComments(postId)(using sigleThreadPoolContext())
-    getCommentsService map {
-      case listComments: List[_]          => checkList[Comment](listComments) { c =>
+    getCommentsService map { listComments => 
+      checkList[Comment](listComments) { c =>
         assertEquals(postId, c.postId)
       }
     } recover {
@@ -74,8 +72,8 @@ class ServicesSuite extends munit.FunSuite:
   test("getLikes result") {
     val postId = UUID.randomUUID()
     val getLikesService = getLikes(postId)(using sigleThreadPoolContext())
-    getLikesService map {
-      case listLikes: List[_]          => checkList[Like](listLikes) { l =>
+    getLikesService map { listLikes => 
+      checkList[Like](listLikes) { l =>
         assertEquals(postId, l.postId)
       }
     } recover {
@@ -86,8 +84,8 @@ class ServicesSuite extends munit.FunSuite:
   test("getShares result") {
     val postId = UUID.randomUUID()
     val getSharesService = getShares(postId)(using sigleThreadPoolContext())
-    getSharesService map {
-      case listShares: List[_]          => checkList[Share](listShares) { s =>
+    getSharesService map { listShares  => 
+      checkList[Share](listShares) { s =>
         assertEquals(postId, s.postId)
       }
     } recover {
