@@ -14,7 +14,7 @@ lazy val dependencies =
     munit
 
 lazy val commonSettings = Seq(
-    scalaVersion := "3.0.0-M3",
+    scalaVersion := "3.0.0-RC2",
     organization := "karazin-scala-users-group",
     version      := "0.1.0-SNAPSHOT",
     scalacOptions ++= Seq(
