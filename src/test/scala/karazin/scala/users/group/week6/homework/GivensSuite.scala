@@ -24,12 +24,9 @@ end basicTypesCheck
 object listCheck extends Properties("List types"):
   
   def getSampleString[T](list: List[T])(using encoder: => JsonStringEncoder[T]): String =
-    list.foldLeft("[") { (acc, elem) =>
-      if acc == "[" then
-        acc + " " + elem.toJsonString()
-      else
-        acc + ", " + elem.toJsonString()
-    } + " ]"
+    "[ " + list.foldLeft(List[String]()) { (acc, elem) =>
+      acc :+ elem.toJsonString()
+    }.mkString(", ") + " ]"
 
   property("listInt") = forAll { (li: List[Int]) =>
     li.toJsonString() == getSampleString(li)
@@ -48,13 +45,10 @@ end listCheck
 object mapCheck extends Properties("Map types"):
   
   def getSampleString[V](map: Map[String, V])(using encoder: => JsonStringEncoder[V]): String =
-    map.foldLeft("{") {
+    "{ " + map.foldLeft(List[String]()) {
       case (acc, (key, value)) =>
-        if acc == "{" then
-          acc + " " + key.toJsonString() + ": " + value.toJsonString()
-        else
-          acc + ", " + key.toJsonString() + ": " + value.toJsonString()
-    } + " }"
+        acc :+ (key.toJsonString() + ": " + value.toJsonString())
+    }.mkString(", ") + " }"
 
   property("mapInt") = forAll { (mi: Map[String, Int]) =>
     mi.toJsonString() == getSampleString(mi)

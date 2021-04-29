@@ -28,20 +28,18 @@ object givens:
 
   given ListEncoder[T](using encoder: => JsonStringEncoder[T]): JsonStringEncoder[List[T]] with
     def encode(list: List[T]): String =
-      list.foldLeft("[") { (acc, elem) =>
-        if acc == "[" then
-          acc + " " + encoder.encode(elem)
-        else
-          acc + ", " + encoder.encode(elem)
-      } + " ]"
+      "[ " + list.foldLeft(List[String]()) { (acc, elem) =>
+        acc :+ elem.toJsonString()
+      }.mkString(", ") + " ]"
 
   given MapEncoder[V](using encoderValue: => JsonStringEncoder[V])
-                             (using encoderKey: => JsonStringEncoder[String]): JsonStringEncoder[Map[String, V]] with
+                     (using encoderKey: => JsonStringEncoder[String]): JsonStringEncoder[Map[String, V]] with
     def encode(map: Map[String, V]): String =
-      map.foldLeft("{") {
+      "{ " + map.foldLeft(List[String]()) {
         case (acc, (key, value)) =>
-          if acc == "{" then
-            acc + " " + encoderKey.encode(key) + ": " + encoderValue.encode(value)
-          else
-            acc + ", " + encoderKey.encode(key) + ": " + encoderValue.encode(value)
-      } + " }"
+            acc :+ (key.toJsonString() + ": " + value.toJsonString())
+      }.mkString(", ") + " }"
+
+  object JsonStringEncoder:
+    def apply[V](using encoder: => JsonStringEncoder[V]): JsonStringEncoder[V] =
+      return encoder

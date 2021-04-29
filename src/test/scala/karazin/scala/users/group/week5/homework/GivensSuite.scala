@@ -27,50 +27,50 @@ class GivensSuite extends munit.FunSuite:
   
   test("Int JSON") {
     assertEquals(
-      summon[JsonStringEncoder[Int]]
+      JsonStringEncoder[Int]
         .encode(42), "42"
     )
   }
 
   test("Bool JSON") {
     assertEquals(
-      summon[JsonStringEncoder[Boolean]]
+      JsonStringEncoder[Boolean]
         .encode(true), "true"
     )
   }
 
   test("String JSON") {
     assertEquals(
-      summon[JsonStringEncoder[String]]
+      JsonStringEncoder[String]
         .encode("Some String"), "\"Some String\""
     )
   }
 
   test("List String JSON") {
     assertEquals(
-      summon[JsonStringEncoder[List[String]]]
+      JsonStringEncoder[List[String]]
         .encode("one" :: "two" :: "three" :: Nil), "[ \"one\", \"two\", \"three\" ]"
     )
   }
 
   test("List Booleans JSON") {
     assertEquals(
-      summon[JsonStringEncoder[List[Boolean]]]
+      JsonStringEncoder[List[Boolean]]
         .encode(true :: false :: true :: Nil), "[ true, false, true ]"
     )
   }
 
   test("List Integers JSON") {
     assertEquals(
-      summon[JsonStringEncoder[List[Int]]]
+      JsonStringEncoder[List[Int]]
         .encode(234 :: -13 :: 0 :: Nil), "[ 234, -13, 0 ]"
     )
   }
 
   test("List Empty JSON") {
     assertEquals(
-      summon[JsonStringEncoder[List[Int]]]
-        .encode(Nil), "[ ]"
+      JsonStringEncoder[List[Int]]
+        .encode(Nil), "[  ]"
     )
   }
 
