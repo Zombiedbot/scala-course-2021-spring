@@ -28,18 +28,18 @@ object givens:
 
   given ListEncoder[T](using encoder: => JsonStringEncoder[T]): JsonStringEncoder[List[T]] with
     def encode(list: List[T]): String =
-      "[ " + list.foldLeft(List[String]()) { (acc, elem) =>
-        acc :+ elem.toJsonString()
-      }.mkString(", ") + " ]"
+      list.map { (elem) =>
+        elem.toJsonString()
+      }.mkString("[ ", ", ", " ]")
 
   given MapEncoder[V](using encoderValue: => JsonStringEncoder[V])
                      (using encoderKey: => JsonStringEncoder[String]): JsonStringEncoder[Map[String, V]] with
     def encode(map: Map[String, V]): String =
-      "{ " + map.foldLeft(List[String]()) {
+      map.foldLeft(List[String]()) {
         case (acc, (key, value)) =>
             acc :+ (key.toJsonString() + ": " + value.toJsonString())
-      }.mkString(", ") + " }"
+      }.mkString("{ ", ", ", " }")
 
   object JsonStringEncoder:
-    def apply[V](using encoder: => JsonStringEncoder[V]): JsonStringEncoder[V] =
+    def apply[V](using encoder: JsonStringEncoder[V]): JsonStringEncoder[V] =
       return encoder
