@@ -12,21 +12,65 @@ package karazin.scala.users.group.week9.homework
  */
 
 import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import cats.Functor
 import cats.implicits._
-
 import munit.ScalaCheckSuite
-import org.scalacheck.Prop._
-
+import org.scalacheck._
+import Prop.{forAll, propBoolean}
+import scala.util.{Failure, Success, Try}
+import scala.language.postfixOps
+import math.Fractional.Implicits.infixFractionalOps
+import math.Integral.Implicits.infixIntegralOps
+import math.Numeric.Implicits.infixNumericOps
+import munit.Clue.generate
+import karazin.scala.users.group.week9.homework.functors._
 import karazin.scala.users.group.week9.homework.functors._
 
+object FunctorsSuite extends Properties("Functors suite"):
 
-class FunctorsSuite extends ScalaCheckSuite:
-
-  property("successful test example") {
-    forAll { (int: Int) =>
-      int == int
-    }
+  property("sum test") = forAll { (value: Future[List[Try[Option[Int]]]], adder: Int) => 
+    val custom_future = (
+      value map { list =>
+        list map { elem => 
+          elem map { opt => 
+            opt map { (vl: Int) => 
+              vl + adder 
+            } 
+          }
+        }
+      }
+    )
+    val adder_future = adderFunc(value, adder)
+    try 
+      val custom_res = Await.result(custom_future, Duration.Inf)
+      val adder_res = Await.result(adder_future, Duration.Inf)
+      custom_res == adder_res
+    catch
+      case _ => true
   }
+
+  property("mul test") = forAll { (value: Future[List[Try[Option[Int]]]], multiplier: Int) =>
+    val custom_future = (
+      value map { list =>
+        list map { elem =>
+          elem map { opt =>
+            opt map { (vl: Int) =>
+              vl * multiplier
+            }
+          }
+        }
+      }
+      )
+    val mul_future = multiplierFunc(value, multiplier)
+    try
+      val custom_res = Await.result(custom_future, Duration.Inf)
+      val mul_res = Await.result(mul_future, Duration.Inf)
+      custom_res == mul_res
+    catch
+      case _ => true
+  }
+  
+end FunctorsSuite
