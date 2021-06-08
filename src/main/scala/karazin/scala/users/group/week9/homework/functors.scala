@@ -15,13 +15,13 @@ object functors extends App:
     val sigleThreadPoolContext: ExecutionContextExecutorService =
       ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor)
     
-    return Functor[Future].compose[List].compose[Try].compose[Option].map(listOption) {int => int + adder}
+    Functor[Future].compose[List].compose[Try].compose[Option].map(listOption) {int => int + adder}
 
   def multiplierFunc(listOption: Future[List[Try[Option[Int]]]], multiplier: Int)(using Functor[Future]): Future[List[Try[Option[Int]]]] =
     val sigleThreadPoolContext: ExecutionContextExecutorService =
       ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor)
 
-    return Functor[Future].compose[List].compose[Try].compose[Option].map(listOption) {int => int * multiplier}
+    Functor[Future].compose[List].compose[Try].compose[Option].map(listOption) {int => int * multiplier}
   
   
 end functors

@@ -32,7 +32,7 @@ import karazin.scala.users.group.week9.homework.functors._
 object FunctorsSuite extends Properties("Functors suite"):
 
   property("sum test") = forAll { (value: Future[List[Try[Option[Int]]]], adder: Int) => 
-    val custom_future = (
+    val customFuture = (
       value map { list =>
         list map { elem => 
           elem map { opt => 
@@ -43,17 +43,13 @@ object FunctorsSuite extends Properties("Functors suite"):
         }
       }
     )
-    val adder_future = adderFunc(value, adder)
-    try 
-      val custom_res = Await.result(custom_future, Duration.Inf)
-      val adder_res = Await.result(adder_future, Duration.Inf)
-      custom_res == adder_res
-    catch
-      case _ => true
+    val adderFutureCompleted = Try(Await.result(adderFunc(value, adder), Duration.Inf))
+    val customFutureCompleted = Try(Await.result(customFuture, Duration.Inf))
+    adderFutureCompleted == customFutureCompleted
   }
 
   property("mul test") = forAll { (value: Future[List[Try[Option[Int]]]], multiplier: Int) =>
-    val custom_future = (
+    val customFuture = (
       value map { list =>
         list map { elem =>
           elem map { opt =>
@@ -63,14 +59,10 @@ object FunctorsSuite extends Properties("Functors suite"):
           }
         }
       }
-      )
-    val mul_future = multiplierFunc(value, multiplier)
-    try
-      val custom_res = Await.result(custom_future, Duration.Inf)
-      val mul_res = Await.result(mul_future, Duration.Inf)
-      custom_res == mul_res
-    catch
-      case _ => true
+    )
+    val multiplierFutureCompleted = Try(Await.result(multiplierFunc(value, multiplier), Duration.Inf))
+    val customFutureCompleted = Try(Await.result(customFuture, Duration.Inf))
+    multiplierFutureCompleted == customFutureCompleted
   }
   
 end FunctorsSuite
