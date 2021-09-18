@@ -1,5 +1,7 @@
 package karazin.scala.users.group.week5.homework
 
+import karazin.scala.users.group.week5.homework.givens.{given, _}
+
 import scala.concurrent.Future
 
 /*
@@ -23,6 +25,55 @@ import scala.concurrent.Future
  */
 class GivensSuite extends munit.FunSuite:
   
-  test("successful test example") {
-    assertEquals(42, 42)
+  test("Int JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[Int]]
+        .encode(42), "42"
+    )
+  }
+
+  test("Bool JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[Boolean]]
+        .encode(true), "true"
+    )
+  }
+
+  test("String JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[String]]
+        .encode("Some String"), "\"Some String\""
+    )
+  }
+
+  test("List String JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[List[String]]]
+        .encode("one" :: "two" :: "three" :: Nil), "[ \"one\", \"two\", \"three\" ]"
+    )
+  }
+
+  test("List Booleans JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[List[Boolean]]]
+        .encode(true :: false :: true :: Nil), "[ true, false, true ]"
+    )
+  }
+
+  test("List Integers JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[List[Int]]]
+        .encode(234 :: -13 :: 0 :: Nil), "[ 234, -13, 0 ]"
+    )
+  }
+
+  test("List Empty JSON") {
+    assertEquals(
+      summon[JsonStringEncoder[List[Int]]]
+        .encode(Nil), "[ ]"
+    )
+  }
+
+  test("Map fails") {
+    compileErrors("summon[JsonStringEncoder[Map[String, Int]]].encode(Map(\"x\" -> 24, \"y\" -> 25, \"z\" -> 26))")
   }
