@@ -31,14 +31,14 @@ object givens:
       "\"" + elem + "\""
 
   given ListEncoder[T](using encoder: => JsonStringEncoder[T]): JsonStringEncoder[List[T]] with
-    def encode(elem: List[T]): String =
-      elem.foldLeft("[") {(acc, elem) =>
-        if acc == "[" then
-          acc + " " + encoder.encode(elem)
-        else
-          acc + ", " + encoder.encode(elem)
-      } + " ]"
+    def encode(list: List[T]): String =
+      "[ " + list.foldLeft(List[String]()) { (acc, elem) =>
+        acc :+ elem.toJsonString()
+      }.mkString(", ") + " ]"
 
+  object JsonStringEncoder:
+    def apply[V](using encoder: => JsonStringEncoder[V]): JsonStringEncoder[V] =
+      return encoder
   /* 
     Make sure that integers, booleans, strings and lists 
     are convertable to a json string representation 
