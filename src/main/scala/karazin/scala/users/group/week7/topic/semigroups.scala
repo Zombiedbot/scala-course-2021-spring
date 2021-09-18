@@ -10,7 +10,7 @@ object semigroups:
 
   given Semigroup[String] with
     extension (left: String) def combine(right: String): String = left concat right
-// TODO: Add summon for all internal elements!
+  
   given [T]: Semigroup[List[T]] with
     extension (left: List[T]) def combine(right: List[T]): List[T] = left ::: right
 

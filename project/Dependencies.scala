@@ -3,15 +3,11 @@ import sbt._
 object Dependencies {
   
   object Version {
-    val `scala3-compiler`             = "3.0.0-M3"
-    val cats                          = "2.3.1"
-    val `cats-effect`                 = "3.0.0-M5"
-    val munit                         = "0.7.22"
+    val `scala3-compiler`             = "3.0.0-RC2"
+    val cats                          = "2.5.0"
+    val `cats-effect`                 = "3.0.2"
+    val munit                         = "0.7.23"
   }
-
-  lazy val `scala3-compiler`: Seq[ModuleID] = Seq(
-    "org.scala-lang" % "scala3-compiler_3.0.0-M3",
-  ).map(_ % Version.`scala3-compiler` withSources() withJavadoc())
 
   lazy val cats: Seq[ModuleID] = Seq(
     "org.typelevel" %% "cats-core",
@@ -26,7 +22,8 @@ object Dependencies {
   ).map(_ % Version.`cats-effect` withSources() withJavadoc())
   
   lazy val munit: Seq[ModuleID] = Seq(
-    "org.scalameta" %% "munit"
+    "org.scalameta" %% "munit",
+    "org.scalameta" %% "munit-scalacheck"
   ).map(_ % Version.munit % Test withSources() withJavadoc())  
 
 }
