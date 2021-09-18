@@ -12,21 +12,57 @@ package karazin.scala.users.group.week9.homework
  */
 
 import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import cats.Functor
 import cats.implicits._
-
 import munit.ScalaCheckSuite
-import org.scalacheck.Prop._
-
+import org.scalacheck._
+import Prop.{forAll, propBoolean}
+import scala.util.{Failure, Success, Try}
+import scala.language.postfixOps
+import math.Fractional.Implicits.infixFractionalOps
+import math.Integral.Implicits.infixIntegralOps
+import math.Numeric.Implicits.infixNumericOps
+import munit.Clue.generate
+import karazin.scala.users.group.week9.homework.functors._
 import karazin.scala.users.group.week9.homework.functors._
 
+object FunctorsSuite extends Properties("Functors suite"):
 
-class FunctorsSuite extends ScalaCheckSuite:
-
-  property("successful test example") {
-    forAll { (int: Int) =>
-      int == int
-    }
+  property("sum test") = forAll { (value: Future[List[Try[Option[Int]]]], adder: Int) => 
+    val customFuture = (
+      value map { list =>
+        list map { elem => 
+          elem map { opt => 
+            opt map { (vl: Int) => 
+              vl + adder 
+            } 
+          }
+        }
+      }
+    )
+    val adderFutureCompleted = Try(Await.result(adderFunc(value, adder), Duration.Inf))
+    val customFutureCompleted = Try(Await.result(customFuture, Duration.Inf))
+    adderFutureCompleted == customFutureCompleted
   }
+
+  property("mul test") = forAll { (value: Future[List[Try[Option[Int]]]], multiplier: Int) =>
+    val customFuture = (
+      value map { list =>
+        list map { elem =>
+          elem map { opt =>
+            opt map { (vl: Int) =>
+              vl * multiplier
+            }
+          }
+        }
+      }
+    )
+    val multiplierFutureCompleted = Try(Await.result(multiplierFunc(value, multiplier), Duration.Inf))
+    val customFutureCompleted = Try(Await.result(customFuture, Duration.Inf))
+    multiplierFutureCompleted == customFutureCompleted
+  }
+  
+end FunctorsSuite
