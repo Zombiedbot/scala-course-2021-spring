@@ -7,12 +7,21 @@ import org.scalacheck.Prop._
 
 
 class PolymorphicFunctionsSuite extends ScalaCheckSuite:
-
-  trait Unknown
-  val `gen Unknown`: Gen[Unknown] = Gen.const(new Unknown {})
-  val `gen Unknown => Unknown`: Gen[Unknown => Unknown] = Gen.const((v: Unknown) ⇒ v)
-  given Arbitrary[Unknown] = Arbitrary(`gen Unknown`)
-  given Arbitrary[Unknown => Unknown] = Arbitrary(`gen Unknown => Unknown`)
+  
+  val `gen Char => Int`: Gen[Char => Int] = Gen.const((c: Char) => c.toInt)
+  val `gen Int => Double`: Gen[Int => Double] = Gen.const((i: Int) => i * 3.14)
+  val `gen Double => String`: Gen[Double => String] = Gen.const((d: Double) => d.toString)
+  val `gen String => List[Char]`: Gen[String => List[Char]] = Gen.const((s: String) ⇒ s.toList)
+  
+  type charToInt = Char => Int
+  type intToDouble = Int => Double
+  type doubleToString = Double => String
+  type stringToListChar = String => List[Char]
+  
+  given Arbitrary[charToInt] = Arbitrary(`gen Char => Int`)
+  given Arbitrary[intToDouble] = Arbitrary(`gen Int => Double`)
+  given Arbitrary[doubleToString] = Arbitrary(`gen Double => String`)
+  given Arbitrary[stringToListChar] = Arbitrary(`gen String => List[Char]`)
 
   property("`I₍₂,₄₎⁴` test") {
 
@@ -23,8 +32,8 @@ class PolymorphicFunctionsSuite extends ScalaCheckSuite:
         `I₍₂,₄₎⁴`(unknown1)(unknown2)(unknown3)(unknown4) == (unknown2, unknown4)
      */
 
-    forAll { (unknown1: Unknown, unknown2: Unknown, unknown3: Unknown, unknown4: Unknown) =>
-      unknown1 == unknown2
+    forAll { (i: Int, s: String, d: Double, c: Char) =>
+      `I₍₂,₄₎⁴`(i)(s)(d)(c) == (s, c)
     }
 
   }
@@ -38,8 +47,8 @@ class PolymorphicFunctionsSuite extends ScalaCheckSuite:
         `(f ० g ० h ० i)(x)`(unknown1)(unknown2)(unknown3)(unknown4)(unknown4) == ???
      */
 
-    forAll { (unknown1: Unknown ⇒ Unknown, unknown2: Unknown ⇒ Unknown, unknown3: Unknown ⇒ Unknown, unknown4: Unknown ⇒ Unknown, unknown5: Unknown) =>
-      unknown1 == unknown2
+    forAll { (f: String ⇒ List[Char], g: Double ⇒ String, h: Int ⇒ Double, i: Char ⇒ Int, c: Char) =>
+      `(f ० g ० h ० i)(x)`(f)(g)(h)(i)(c) == f(g(h(i(c))))
     }
 
   }
